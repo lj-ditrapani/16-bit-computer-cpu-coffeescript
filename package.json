@@ -1,0 +1,29 @@
+{
+  "name": "16-bit-computer-cpu",
+  "version": "0.1.0",
+  "description": "LJD 16-bit CPU",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "mocha cpu_spec.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lj-ditrapani/16-bit-computer-cpu.git"
+  },
+  "author": "Lyall Jonathan Di Trapani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lj-ditrapani/16-bit-computer-cpu/issues"
+  },
+  "homepage": "https://github.com/lj-ditrapani/16-bit-computer-cpu#readme",
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "coffee-script": "^1.9.3",
+    "coffeelint": "^1.11.1",
+    "gulp": "^3.9.0",
+    "mocha": "^2.3.0"
+  }
+}
