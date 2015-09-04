@@ -5,6 +5,15 @@ Author:  Lyall Jonathan Di Trapani
 ###
 
 
+getNibbles = (word) ->
+  opCode = word >> 12
+  a = (word >> 8) & 0xF
+  b = (word >> 4) & 0xF
+  c = word & 0xF
+  [opCode, a, b, c]
+
+
+
 class CPU
   constructor: ->
     @reset()
@@ -19,6 +28,11 @@ class CPU
     @carry = 0
     @overflow = 0
 
+  step: -> true
 
 
-module.exports = CPU
+
+module.exports = {
+  CPU,
+  getNibbles
+}

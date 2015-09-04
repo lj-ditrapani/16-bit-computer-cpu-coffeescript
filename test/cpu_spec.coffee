@@ -1,5 +1,12 @@
 expect = require('chai').expect
-CPU = require('../cpu.coffee')
+{CPU, getNibbles} = require('../cpu.coffee')
+
+describe 'getNibbles', ->
+  it 'splites a word into 4 4-bit nibbles', ->
+    expect(getNibbles(0xABCD)).to.eql [0xA, 0xB, 0xC, 0xD]
+
+  it 'splites another word into 4 4-bit nibbles', ->
+    expect(getNibbles(0x7712)).to.eql [0x7, 0x7, 0x1, 0x2]
 
 describe 'CPU', ->
   cpu = registers = rom = ram = null
@@ -34,3 +41,13 @@ describe 'CPU', ->
 
     it 'has its flags set to 0', ->
       expect([cpu.carry, cpu.overflow]).to.eql [0, 0]
+
+  describe 'END', ->
+    beforeEach ->
+      rom[0] = 0
+
+    it 'causes step to return true', ->
+      expect(cpu.step()).to.be.true
+
+    it 'halts the cpu', ->
+      expect(cpu.pc).to.equal 0
