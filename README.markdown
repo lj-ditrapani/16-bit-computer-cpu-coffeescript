@@ -18,4 +18,12 @@ Design:
 The processor instruction set architecture (ISA) can be found in
 [doc/ISA.markdown](doc/ISA.markdown).
 
+
+Developing
+----------
+
+    npm install
+
+    gulp -T
+
 Author:  Lyall Jonathan Di Trapani

@@ -5,13 +5,15 @@ Author:  Lyall Jonathan Di Trapani
 ###
 
 
+END = 0
+
+
 getNibbles = (word) ->
   opCode = word >> 12
   a = (word >> 8) & 0xF
   b = (word >> 4) & 0xF
   c = word & 0xF
   [opCode, a, b, c]
-
 
 
 class CPU
@@ -28,11 +30,35 @@ class CPU
     @carry = 0
     @overflow = 0
 
-  step: -> true
+  step: ->
+    instruction = @rom[@pc]
+    [opCode, a, b, c] = getNibbles instruction
+    if opCode == END
+      true
+    else
+      [jump, address] = this[@opCodes[opCode]](a, b, c)
+      @pc = if jump is true then address else @pc + 1
+      false
+
+  LOD: (ra, _, rd) ->
+    address = @registers[ra]
+    @registers[rd] = @ram[address]
+
+  STR: (ra, r2, _) ->
+    address = @registers[ra]
+    value = @registers[r2]
+    @ram[address] = value
 
 
+export_globals = (exports) ->
+  if module?.exports?
+    module.exports = exports
+  else
+    if not ljd?
+      ljd = {}
+    ljd.cpu16bit = exports
 
-module.exports = {
+export_globals {
   CPU,
   getNibbles
 }
