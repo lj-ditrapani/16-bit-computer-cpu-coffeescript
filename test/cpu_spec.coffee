@@ -12,6 +12,8 @@ _ = require 'lodash'
   positionOfLastBitShifted,
   oneBitWordMask,
   getShiftCarry,
+  matchValue,
+  matchFlags,
 } = require '../cpu.coffee'
 
 makeImmediate8Instruction = (opCode, immediate, register) ->
@@ -132,6 +134,50 @@ describe 'getShiftCarry', ->
     [direction, amount, value, carry] = test
     it "(#{value}, #{direction}, #{amount}) => #{carry}", ->
       expect(getShiftCarry(value, direction, amount)).to.equal carry
+
+describe 'matchValue', ->
+  tests = [
+    #  NZP
+    [0b000, 0xFFFF, false]
+    [0b111, 0xFFFF, true]
+    [0b011, 0xFFFF, false]
+    [0b100, 0xFFFF, true]
+    [0b100, 0x8000, true]
+    [0b110, 0x0000, true]
+    [0b101, 0x0000, false]
+    [0b010, 0x0000, true]
+    [0b001, 0x7FFF, true]
+    [0b110, 0x7FFF, false]
+    [0b101, 0x7FFF, true]
+  ]
+  _.each tests, (test) ->
+    [cond, value, result] = test
+    it "(#{cond}, #{value}) => #{result}", ->
+      expect(matchValue(value, cond)).to.equal result
+
+describe 'matchFlags', ->
+  tests = [
+    #  VC
+    [0b00, 0, 0, true]
+    [0b00, 1, 0, false]
+    [0b00, 0, 1, false]
+    [0b11, 0, 1, true]
+    [0b11, 1, 0, true]
+    [0b11, 1, 1, true]
+    [0b11, 0, 0, false]
+    [0b10, 0, 0, false]
+    [0b10, 0, 1, false]
+    [0b10, 1, 0, true]
+    [0b10, 1, 1, true]
+    [0b01, 0, 0, false]
+    [0b01, 0, 1, true]
+    [0b01, 1, 0, false]
+    [0b01, 1, 1, true]
+  ]
+  _.each tests, (test) ->
+    [cond, overflow, carry, result] = test
+    it "(#{cond}, #{overflow}, #{carry}) => #{result}", ->
+      expect(matchFlags(overflow, carry, cond)).to.equal result
 
 describe 'CPU', ->
   cpu = registers = rom = ram = null
