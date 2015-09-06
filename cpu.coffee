@@ -40,6 +40,16 @@ class CPU
       @pc = if jump is true then address else @pc + 1
       false
 
+  HBY: (highNibble, lowNibble, register) ->
+    immediate8 = (highNibble << 4) | lowNibble
+    value = @registers[register]
+    @registers[register] = (immediate8 << 8) | (value & 0x00FF)
+
+  LBY: (highNibble, lowNibble, register) ->
+    immediate8 = (highNibble << 4) | lowNibble
+    value = @registers[register]
+    @registers[register] = (value & 0xFF00) | immediate8
+
   LOD: (ra, _, rd) ->
     address = @registers[ra]
     @registers[rd] = @ram[address]
