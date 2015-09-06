@@ -33,6 +33,63 @@ hasOverflowedOnAdd = (a, b, sum) ->
    (isPositiveOrZero(a) and isPositiveOrZero(b) and isNegative(sum)))
 
 
+positionOfLastBitShifted = (direction, amount) ->
+  if direction == 'right'
+    amount - 1
+  else
+    16 - amount
+
+
+oneBitWordMask = (position) ->
+  Math.pow(2, position)
+
+
+getShiftCarry = (value, direction, amount) ->
+  position = positionOfLastBitShifted(direction, amount)
+  mask = oneBitWordMask(position)
+  if (value & mask) > 0 then 1 else 0
+
+
+matchValue = (value, cond) ->
+  if ((cond & 0b100) == 0b100) and isNegative(value)
+    true
+  else if ((cond & 0b010) == 0b010) and (value == 0)
+    true
+  else if ((cond & 0b001) == 0b001) and isTruePositive(value)
+    true
+  else
+    false
+
+
+matchFlags = (overflow, carry, cond) ->
+  if (cond >= 2) and overflow
+    true
+  else if ((cond & 1) == 1) and carry
+    true
+  else if (cond == 0) and (not overflow) and (not carry)
+    true
+  else
+    false
+
+
+class CPU
+
+  constructor: ->
+    @reset()
+    @opCodes = ('END HBY LBY LOD STR ADD SUB ADI SBI AND' +
+                 ' ORR XOR NOT SHF BRN SPC').split(' ')
+
+  reset: ->
+    @pc = 0
+    @registers = (0 for _ in [0...16])
+    @ram = (0 for _ in [0...Math.pow(2, 16)])
+    @carry = 0
+    @overflow = 0
+
+  step: ->
+    instruction = @ram[@pc]
+
+
 class CPU
   constructor: ->
     @reset()
@@ -135,5 +192,10 @@ export_globals = (exports) ->
 
 export_globals {
   CPU,
-  getNibbles
+  getNibbles,
+  positionOfLastBitShifted,
+  oneBitWordMask,
+  getShiftCarry,
+  matchValue,
+  matchFlags,
 }

@@ -6,38 +6,79 @@ Tests op codes for 16 bit CPU simulator
 
 expect = require('chai').expect
 _ = require 'lodash'
-{CPU, getNibbles} = require '../cpu.coffee'
-
-describe 'makeImmediate8Instruction', ->
-  tests = [
-    [1, 0x17, 0xF, 0x117F, 'HBY']
-    [2, 0xFF, 0x5, 0x2FF5, 'LBY']
-  ]
-  runTest = (test) ->
-    [opCode, immediate, register, instruction, name] = test
-    it "makes a #{name} instruction", ->
-      i = makeImmediate8Instruction(opCode, immediate, register)
-      expect(i).to.equal instruction
-  _.each(tests, runTest)
+{
+  CPU,
+  getNibbles,
+  positionOfLastBitShifted,
+  oneBitWordMask,
+  getShiftCarry,
+} = require '../cpu.coffee'
 
 makeImmediate8Instruction = (opCode, immediate, register) ->
   (opCode << 12) | (immediate << 4) | register
 
-describe 'makeInstruction', ->
-  tests = [
-    [3, 0xF, 0x0, 0x2, 0x3F02, 'LOD']
-    [4, 0xE, 0x2, 0x0, 0x4E20, 'STR']
-    [5, 0x1, 0x2, 0xD, 0x512D, 'ADD']
-    [6, 0x1, 0x2, 0x3, 0x6123, 'SUB']
-    [7, 0x7, 0x1, 0x2, 0x7712, 'ADI']
-  ]
-  _.each tests, (test) ->
-    [opCode, a, b, c, instruction, name] = test
-    it "makes a #{name} inscruction", ->
-      expect(makeInstruction(opCode, a, b, c)).to.equal instruction
-
 makeInstruction = (opCode, a, b, c) ->
   (opCode << 12) | (a << 8) | (b << 4) | c
+
+makeCondCode = (strCode) ->
+  code = 0
+  if ("V" in strCode) or ("C" in strCode) or ("-" in strCode)
+    code += 8
+    if "V" in strCode
+      code += 2
+    if "C" in strCode
+      code += 1
+  else
+    if "N" in strCode
+      code += 4
+    if "Z" in strCode
+      code += 2
+    if "P" in strCode
+      code += 1
+  code
+
+describe 'test helper functions', ->
+  describe 'makeImmediate8Instruction', ->
+    tests = [
+      [1, 0x17, 0xF, 0x117F, 'HBY']
+      [2, 0xFF, 0x5, 0x2FF5, 'LBY']
+    ]
+    runTest = (test) ->
+      [opCode, immediate, register, instruction, name] = test
+      it "makes a #{name} instruction", ->
+        i = makeImmediate8Instruction(opCode, immediate, register)
+        expect(i).to.equal instruction
+    _.each(tests, runTest)
+
+  describe 'makeInstruction', ->
+    tests = [
+      [3, 0xF, 0x0, 0x2, 0x3F02, 'LOD']
+      [4, 0xE, 0x2, 0x0, 0x4E20, 'STR']
+      [5, 0x1, 0x2, 0xD, 0x512D, 'ADD']
+      [6, 0x1, 0x2, 0x3, 0x6123, 'SUB']
+      [7, 0x7, 0x1, 0x2, 0x7712, 'ADI']
+    ]
+    _.each tests, (test) ->
+      [opCode, a, b, c, instruction, name] = test
+      it "makes a #{name} inscruction", ->
+        expect(makeInstruction(opCode, a, b, c)).to.equal instruction
+
+  describe 'makeCondCode', ->
+    tests = [
+      ["NZP", 0b0111]
+      ["ZP", 0b0011]
+      ["Z", 0b0010]
+      ["P", 0b0001]
+      ["VC", 0b1011]
+      ["C", 0b1001]
+      ["V", 0b1010]
+      ["", 0b0000]
+      ["-", 0b1000]
+    ]
+    _.each tests, (test) ->
+      [str, code] = test
+      it "(#{str}) => #{code}", ->
+        expect(makeCondCode(str)).to.equal code
 
 describe 'getNibbles', ->
   it 'splites a word into 4 4-bit nibbles', ->
@@ -45,6 +86,52 @@ describe 'getNibbles', ->
 
   it 'splites another word into 4 4-bit nibbles', ->
     expect(getNibbles(0x7712)).to.eql [0x7, 0x7, 0x1, 0x2]
+
+describe 'positionOfLastBitShifted', ->
+  tests = [
+    ['left', 1, 15]
+    ['right', 1, 0]
+    ['left', 4, 12]
+    ['right', 4, 3]
+    ['left', 8, 8]
+    ['right', 8, 7]
+  ]
+  _.each tests, (test) ->
+    [direction, amount, position] = test
+    it "on shift #{direction} by #{amount} = #{position}", ->
+      result = positionOfLastBitShifted(direction, amount)
+      expect(result).to.equal position
+
+describe 'oneBitWordMask', ->
+  tests = [
+    [0, 0x0001]
+    [1, 0x0002]
+    [3, 0x0008]
+    [4, 0x0010]
+    [8, 0x0100]
+    [15, 0x8000]
+    [14, 0x4000]
+  ]
+  _.each tests, (test) ->
+    [position, mask] = test
+    it "given position #{position} produces mask #{mask}", ->
+      expect(oneBitWordMask(position)).to.equal mask
+
+describe 'getShiftCarry', ->
+  tests = [
+    ['left', 1, 0x8000, 1]
+    ['left', 1, 0x7FFF, 0]
+    ['right', 1, 0x0001, 1]
+    ['right', 1, 0xFFFE, 0]
+    ['left', 4, 0x1000, 1]
+    ['right', 4, 0xFFF7, 0]
+    ['left', 8, 0xFEFF, 0]
+    ['right', 8, 0x0080, 1]
+  ]
+  _.each tests, (test) ->
+    [direction, amount, value, carry] = test
+    it "(#{value}, #{direction}, #{amount}) => #{carry}", ->
+      expect(getShiftCarry(value, direction, amount)).to.equal carry
 
 describe 'CPU', ->
   cpu = registers = rom = ram = null
