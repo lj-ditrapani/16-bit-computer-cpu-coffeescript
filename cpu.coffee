@@ -105,6 +105,22 @@ class CPU
     diff = @add a, notB, 1
     @registers[rd] = diff
 
+  AND: (r1, r2, rd) ->
+    [a, b] = [@registers[r1], @registers[r2]]
+    @registers[rd] = a & b
+
+  ORR: (r1, r2, rd) ->
+    [a, b] = [@registers[r1], @registers[r2]]
+    @registers[rd] = a | b
+
+  XOR: (r1, r2, rd) ->
+    [a, b] = [@registers[r1], @registers[r2]]
+    @registers[rd] = a ^ b
+
+  NOT: (r1, _, rd) ->
+    a = @registers[r1]
+    @registers[rd] = a ^ 0xFFFF
+
   SPC: (_, __, rd) ->
     @registers[rd] = @pc + 2
 

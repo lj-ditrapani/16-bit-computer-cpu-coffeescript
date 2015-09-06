@@ -88,6 +88,20 @@ describe 'CPU', ->
       _.each BINARY_PAIRS, (binaryPair) ->
         runTest test, binaryPair
 
+  testLogicOperation = (opCode, r1, r2, rd, name, tests) ->
+    _.each tests, (test) ->
+      [a, b, result] = test
+      testName = if name == 'NOT'
+        "#{name} #{a} = #{result}"
+      else
+        "#{a} #{name} #{b} = #{result}"
+      it testName, ->
+        registers[r1] = a
+        registers[r2] = b
+        i = makeInstruction(opCode, r1, r2, rd)
+        runOneInstruction i
+        expect(registers[rd]).to.equal result
+
   beforeEach ->
     cpu = new CPU
     ram = cpu.ram
@@ -229,6 +243,40 @@ describe 'CPU', ->
       [0xFEED, 0x000E, 0xFEDF, 1, 0]
     ]
     testAddSub(8, '-', tests, true)
+
+  describe 'AND', ->
+    tests = [
+      [0x0000, 0x0000, 0x0000]
+      [0xFEED, 0xFFFF, 0xFEED]
+      [0xFEED, 0x0F0F, 0x0E0D]
+      [0x7BDC, 0xCCE3, 0x48C0]
+    ]
+    testLogicOperation(9, 14, 7, 0, 'AND', tests)
+
+  describe 'ORR', ->
+    tests = [
+      [0x0000, 0x0000, 0x0000]
+      [0xFEED, 0xFFFF, 0xFFFF]
+      [0xF000, 0x000F, 0xF00F]
+      [0xC8C6, 0x3163, 0xF9E7]
+    ]
+    testLogicOperation(0xA, 13, 5, 3, 'OR', tests)
+
+  describe 'XOR', ->
+    tests = [
+      [0x0000, 0x0000, 0x0000]
+      [0xFF00, 0x00FF, 0xFFFF]
+      [0x4955, 0x835A, 0xCA0F]
+    ]
+    testLogicOperation(0xB, 4, 6, 8, 'XOR', tests)
+
+  describe 'NOT', ->
+    tests = [
+      [0x0000, 0, 0xFFFF]
+      [0xFF00, 0, 0x00FF]
+      [0x4955, 0, 0xB6AA]
+    ]
+    testLogicOperation(0xC, 9, 0, 5, 'NOT', tests)
 
   describe 'SPC', ->
     tests = [
