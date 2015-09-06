@@ -94,6 +94,20 @@ class CPU
     diff = @add a, notB, 1
     @registers[rd] = diff
 
+  ADI: (r1, immd, rd) ->
+    a = @registers[r1]
+    sum = @add a, immd, 0
+    @registers[rd] = sum
+
+  SBI: (r1, immd, rd) ->
+    a = @registers[r1]
+    notB = immd ^ 0xFFFF
+    diff = @add a, notB, 1
+    @registers[rd] = diff
+
+  SPC: (_, __, rd) ->
+    @registers[rd] = @pc + 2
+
 
 export_globals = (exports) ->
   if module?.exports?

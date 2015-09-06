@@ -205,3 +205,41 @@ describe 'CPU', ->
       [0x7FFF, 0x0001, 0x7FFE, 1, 0]
     ]
     testAddSub(6, '-', tests)
+
+  describe 'ADI', ->
+    tests = [
+      [0x0000, 0x0000, 0x0000, 0, 0]
+      [0xFFFF, 0x0001, 0x0000, 1, 0]
+      [0x7FFF, 0x0001, 0x8000, 0, 1]
+      [0x7FFE, 0x0001, 0x7FFF, 0, 0]
+      [0xFFFE, 0x000F, 0x000D, 1, 0]
+      [0x7FFE, 0x000F, 0x800D, 0, 1]
+      [0xFEDF, 0x000E, 0xFEED, 0, 0]
+    ]
+    testAddSub(7, '+', tests, true)
+
+  describe 'SBI', ->
+    tests = [
+      [0x0000, 0x0000, 0x0000, 1, 0]
+      [0x0000, 0x0001, 0xFFFF, 0, 0]
+      [0x8000, 0x0001, 0x7FFF, 1, 1]
+      [0x7FFF, 0x0001, 0x7FFE, 1, 0]
+      [0x000D, 0x000F, 0xFFFE, 0, 0]
+      [0x800D, 0x000F, 0x7FFE, 1, 1]
+      [0xFEED, 0x000E, 0xFEDF, 1, 0]
+    ]
+    testAddSub(8, '-', tests, true)
+
+  describe 'SPC', ->
+    tests = [
+      [0, 0x0000, 0x0002]
+      [1, 0x00FF, 0x0101]
+      [15, 0x0F00, 0x0F02]
+    ]
+    _.each tests, (test) ->
+      [rd, pc, value] = test
+      it "#{rd} #{pc} #{value}", ->
+        registers[rd] = 0
+        i = makeInstruction(15, 0, 0, rd)
+        runOneInstruction(i, pc)
+        expect(registers[rd]).to.equal value
