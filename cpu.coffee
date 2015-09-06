@@ -16,6 +16,23 @@ getNibbles = (word) ->
   [opCode, a, b, c]
 
 
+isPositiveOrZero = (word) ->
+  (word >> 15) == 0
+
+
+isNegative = (word) ->
+  (word >> 15) == 1
+
+
+isTruePositive = (word) ->
+  isPositiveOrZero(word) and (word != 0)
+
+
+hasOverflowedOnAdd = (a, b, sum) ->
+  ((isNegative(a) and isNegative(b) and isPositiveOrZero(sum)) or
+   (isPositiveOrZero(a) and isPositiveOrZero(b) and isNegative(sum)))
+
+
 class CPU
   constructor: ->
     @reset()
@@ -40,6 +57,13 @@ class CPU
       @pc = if jump is true then address else @pc + 1
       false
 
+  add: (a, b, carry) ->
+    sum = a + b + carry
+    @carry = Number(sum >= Math.pow(2, 16))
+    sum = sum & 0xFFFF
+    @overflow = Number(hasOverflowedOnAdd(a, b, sum))
+    sum
+
   HBY: (highNibble, lowNibble, register) ->
     immediate8 = (highNibble << 4) | lowNibble
     value = @registers[register]
@@ -58,6 +82,17 @@ class CPU
     address = @registers[ra]
     value = @registers[r2]
     @ram[address] = value
+
+  ADD: (r1, r2, rd) ->
+    [a, b] = [@registers[r1], @registers[r2]]
+    sum = @add a, b, 0
+    @registers[rd] = sum
+
+  SUB: (r1, r2, rd) ->
+    [a, b] = [@registers[r1], @registers[r2]]
+    notB = b ^ 0xFFFF
+    diff = @add a, notB, 1
+    @registers[rd] = diff
 
 
 export_globals = (exports) ->

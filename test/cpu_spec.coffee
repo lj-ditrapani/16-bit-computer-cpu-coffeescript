@@ -48,6 +48,7 @@ describe 'getNibbles', ->
 
 describe 'CPU', ->
   cpu = registers = rom = ram = null
+  BINARY_PAIRS = [[0, 0], [0, 1], [1, 0], [1, 1]]
 
   runOneInstruction = (instruction, pc = 0) ->
     cpu.pc = pc
@@ -67,10 +68,8 @@ describe 'CPU', ->
     runTest = (test, binaryPair) ->
       [a, b, result, finalCarry, finalOverflow] = test
       [initialCarry, initialOverflow] = binaryPair
-      it "#{a} #{symbol} #{b} = #{result}", ->
-        console.log [
-          a, b, result, finalCarry, finalOverflow,
-          initialCarry, initialOverflow]
+      cv = "#{initialCarry}#{initialOverflow}"
+      it "#{a} #{symbol} #{b} = #{result} (cv #{cv})", ->
         [r1, r2, rd] = if initialCarry then [3, 4, 13] else [7, 11, 2]
         cpu.carry = initialCarry
         cpu.overflow = initialOverflow
@@ -82,9 +81,9 @@ describe 'CPU', ->
           r2
         i = makeInstruction(opCode, r1, thirdNibble, rd)
         runOneInstruction i
-        expect(registers[rd]).equal result
-        equal cpu.carry, finalCarry, 'carry'
-        equal cpu.overflow, finalOverflow, 'overflow'
+        expect(registers[rd]).to.equal result
+        expect(cpu.carry).to.equal finalCarry
+        expect(cpu.overflow).to.equal finalOverflow
     _.each tests, (test) ->
       _.each BINARY_PAIRS, (binaryPair) ->
         runTest test, binaryPair
@@ -174,3 +173,35 @@ describe 'CPU', ->
         i = makeInstruction(4, addressRegister, valueRegister, 0)
         runOneInstruction i
         expect(ram[address]).to.equal value
+
+  describe 'ADD', ->
+    tests = [
+      [0x0000, 0x0000, 0x0000, 0, 0]
+      [0x00FF, 0xFF00, 0xFFFF, 0, 0]
+      [0xFFFF, 0x0001, 0x0000, 1, 0]
+      [0x0001, 0xFFFF, 0x0000, 1, 0]
+      [0xFFFF, 0xFFFF, 0xFFFE, 1, 0]
+      [0x8000, 0x8000, 0x0000, 1, 1]
+      [0x1234, 0x9876, 0xAAAA, 0, 0]
+      [0x1234, 0xDEAD, 0xF0E1, 0, 0]
+      [0x7FFF, 0x0001, 0x8000, 0, 1]
+      [0x0FFF, 0x7001, 0x8000, 0, 1]
+      [0x7FFE, 0x0001, 0x7FFF, 0, 0]
+    ]
+    testAddSub(5, '+', tests)
+
+  describe 'SUB', ->
+    tests = [
+      [0x0000, 0x0000, 0x0000, 1, 0]
+      [0x0000, 0x0001, 0xFFFF, 0, 0]
+      [0x0005, 0x0007, 0xFFFE, 0, 0]
+      [0x7FFE, 0x7FFF, 0xFFFF, 0, 0]
+      [0xFFFF, 0xFFFF, 0x0000, 1, 0]
+      [0xFFFF, 0x0001, 0xFFFE, 1, 0]
+      [0x8000, 0x8000, 0x0000, 1, 0]
+      [0x8000, 0x7FFF, 0x0001, 1, 1]
+      [0xFFFF, 0x7FFF, 0x8000, 1, 0]
+      [0x7FFF, 0xFFFF, 0x8000, 0, 1]
+      [0x7FFF, 0x0001, 0x7FFE, 1, 0]
+    ]
+    testAddSub(6, '-', tests)
