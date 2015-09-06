@@ -178,6 +178,25 @@ class CPU
     a = @registers[r1]
     @registers[rd] = a ^ 0xFFFF
 
+  SHF: (r1, immd, rd) ->
+    direction = if immd >= 8 then 'right' else 'left'
+    amount = (immd & 7) + 1
+    value = @registers[r1]
+    @carry = getShiftCarry(value, direction, amount)
+    value = if direction == 'right'
+      value >> amount
+    else
+      (value << amount) & 0xFFFF
+    @registers[rd] = value
+
+  BRN: (r1, r2, cond) ->
+    [value, jumpAddr] = [@registers[r1], @registers[r2]]
+    takeJump = if cond >= 8
+      matchFlags(@overflow, @carry, cond - 8)
+    else
+      matchValue(value, cond)
+    if takeJump then [true, jumpAddr] else [false, 0]
+
   SPC: (_, __, rd) ->
     @registers[rd] = @pc + 2
 

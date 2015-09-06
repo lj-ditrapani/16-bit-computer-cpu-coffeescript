@@ -411,6 +411,90 @@ describe 'CPU', ->
     ]
     testLogicOperation(0xC, 9, 0, 5, 'NOT', tests)
 
+  describe 'SHF', ->
+    tests = [
+      [0x0704, 0, 0x4, 0x7040, 0]
+      [0x090F, 0, 0x1, 0x121E, 0]
+      [0x090F, 0, 0x3, 0x4878, 0]
+      [0x90F0, 1, 0x4, 0x090F, 0]
+      [0x90F1, 1, 0x1, 0x4878, 1]
+      [0x450A, 0, 0x7, 0x8500, 0]
+      [0x450A, 0, 0x8, 0x0A00, 1]
+      [0x450A, 1, 0x8, 0x0045, 0]
+    ]
+    _.each tests, (test) ->
+      [value, direction, amount, result, carry] = test
+      sDirection = if direction then "right" else "left"
+      it "SHF #{value} #{sDirection} by #{amount} = #{result}", ->
+        [r1, rd] = [14, 7]
+        cpu.carry = 0
+        registers[r1] = value
+        immd4 = direction * 8 + (amount - 1)
+        i = makeInstruction(13, r1, immd4, rd)
+        runOneInstruction i
+        expect(registers[rd]).to.equal result
+        expect(cpu.carry).to.equal carry
+
+  describe 'BRN', ->
+    runBranchTest = (mode, r1, r2, tests) ->
+      _.each tests, (test) ->
+        messageHead = if mode == 'value'
+          [value, condString, takeJump] = test
+          "#{value}"
+        else # mode is 'flag'
+          [overflow, carry, condString, takeJump] = test
+          "#{overflow} #{carry}"
+        it messageHead + " #{condString} #{takeJump}", ->
+          if mode == 'value'
+            registers[r1] = value
+          else # mode is 'flag'
+            cpu.overflow = overflow
+            cpu.carry = carry
+          jumpAddr = 0x00FF
+          registers[r2] = jumpAddr
+          condCode = makeCondCode condString
+          i = makeInstruction(14, r1, r2, condCode)
+          runOneInstruction i
+          finalPC = if takeJump then jumpAddr else 0x0001
+          expect(cpu.pc).to.equal finalPC
+
+    describe 'on value', ->
+      tests = [
+        [0xFFFF, "",    false]
+        [0xFFFF, "NZP", true]
+        [0xFFFF, "ZP",  false]
+        [0xFFFF, "N",   true]
+        [0x8000, "N",   true]
+        [0x0000, "NZ",  true]
+        [0x0000, "NP",  false]
+        [0x0000, "Z",   true]
+        [0x7FFF, "P",   true]
+        [0x7FFF, "NZ",  false]
+        [0x7FFF, "NP",  true]
+      ]
+      runBranchTest('value', 12, 0, tests)
+
+    describe 'on flag', ->
+      tests = [
+        [0, 0, '-', true]
+        [1, 0, '-', false]
+        [0, 1, '-', false]
+        [0, 1, 'VC', true]
+        [1, 0, 'VC', true]
+        [1, 1, 'VC', true]
+        [0, 0, 'VC', false]
+        [0, 0, 'V', false]
+        [0, 1, 'V', false]
+        [1, 0, 'V', true]
+        [1, 1, 'V', true]
+        [0, 0, 'C', false]
+        [0, 1, 'C', true]
+        [1, 0, 'C', false]
+        [1, 1, 'C', true]
+      ]
+      runBranchTest('flag', 11, 1, tests)
+
+
   describe 'SPC', ->
     tests = [
       [0, 0x0000, 0x0002]
