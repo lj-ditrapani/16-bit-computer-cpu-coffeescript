@@ -19,6 +19,25 @@ The processor instruction set architecture (ISA) can be found in
 [doc/ISA.markdown](doc/ISA.markdown).
 
 
+Usage
+-----
+
+    npm install
+
+    gulp compile
+
+This produces cpu16bit.js which you can use in your projects.
+
+From browser:
+
+    cpu = new ljd.cpu16bit.CPU
+
+From node.js
+
+    cpu16bit = require './cpu16bit.js'
+    cpu = new cpu16bit.CPU
+
+
 Developing
 ----------
 
