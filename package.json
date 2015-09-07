@@ -2,7 +2,7 @@
   "name": "16-bit-computer-cpu",
   "version": "0.1.0",
   "description": "LJD 16-bit CPU",
-  "main": "index.js",
+  "main": "cpu16bit.js",
   "directories": {
     "doc": "doc"
   },

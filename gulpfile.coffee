@@ -25,9 +25,9 @@ logit = ->
   gutil.log(stack)
 
 gulp.task 'compile', ->
-  gulp.src 'cpu.coffee'
+  gulp.src 'cpu16bit.coffee'
     .pipe coffee().on('error', logit)
     .pipe gulp.dest('./')
-  gulp.src 'test/cpu_spec.coffee'
+  gulp.src 'test/cpu16bit_spec.coffee'
     .pipe coffee().on('error', logit)
     .pipe gulp.dest('./test')

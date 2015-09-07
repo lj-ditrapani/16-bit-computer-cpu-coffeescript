@@ -18,7 +18,7 @@ else
   matchValue,
   matchFlags,
 } = if require?
-  require '../cpu.coffee'
+  require '../cpu16bit.coffee'
 else
   ljd.cpu16bit
 
