@@ -23,7 +23,6 @@ Usage
 -----
 
     npm install
-
     gulp compile
 
 This produces cpu16bit.js which you can use in your projects.
@@ -42,7 +41,6 @@ Developing
 ----------
 
     npm install
-
     gulp -T
 
 Author:  Lyall Jonathan Di Trapani

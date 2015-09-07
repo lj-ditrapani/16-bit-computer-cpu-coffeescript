@@ -3,6 +3,7 @@ Author:  Lyall Jonathan Di Trapani
 Tests op codes for 16 bit CPU simulator
 ---------|---------|---------|---------|---------|---------|---------|---------
 ###
+
 if require?
   expect = require('chai').expect
   _ = require 'lodash'
