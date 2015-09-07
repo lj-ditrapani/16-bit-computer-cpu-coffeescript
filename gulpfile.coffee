@@ -12,7 +12,7 @@ gulp.task 'lint', ->
     .pipe coffeelint.reporter()
 
 gulp.task 'test', ->
-  gulp.src 'test/*_spec.coffee', {read: false}
+  gulp.src 'test/*-spec.coffee', {read: false}
     .pipe mocha({reporter: 'landing'})
 
 logit = ->
@@ -28,6 +28,6 @@ gulp.task 'compile', ->
   gulp.src 'cpu16bit.coffee'
     .pipe coffee().on('error', logit)
     .pipe gulp.dest('./')
-  gulp.src 'test/*_spec.coffee'
+  gulp.src 'test/*-spec.coffee'
     .pipe coffee().on('error', logit)
     .pipe gulp.dest('./test')

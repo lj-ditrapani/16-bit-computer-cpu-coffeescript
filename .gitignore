@@ -1,4 +1,4 @@
 /node_modules
 /cpu16bit.js
-/test/cpu16bit_spec.js
-/test/run_programs_spec.js
+/test/cpu16bit-spec.js
+/test/run-programs-spec.js
