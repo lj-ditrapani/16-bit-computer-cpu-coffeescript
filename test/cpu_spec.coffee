@@ -3,9 +3,12 @@ Author:  Lyall Jonathan Di Trapani
 Tests op codes for 16 bit CPU simulator
 ---------|---------|---------|---------|---------|---------|---------|---------
 ###
-
-expect = require('chai').expect
-_ = require 'lodash'
+if require?
+  expect = require('chai').expect
+  _ = require 'lodash'
+else
+  expect = chai.expect
+  _ = window._
 {
   CPU,
   getNibbles,
@@ -14,7 +17,10 @@ _ = require 'lodash'
   getShiftCarry,
   matchValue,
   matchFlags,
-} = require '../cpu.coffee'
+} = if require?
+  require '../cpu.coffee'
+else
+  ljd.cpu16bit
 
 makeImmediate8Instruction = (opCode, immediate, register) ->
   (opCode << 12) | (immediate << 4) | register

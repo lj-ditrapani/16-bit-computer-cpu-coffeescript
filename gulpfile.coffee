@@ -28,3 +28,6 @@ gulp.task 'compile', ->
   gulp.src 'cpu.coffee'
     .pipe coffee().on('error', logit)
     .pipe gulp.dest('./')
+  gulp.src 'test/cpu_spec.coffee'
+    .pipe coffee().on('error', logit)
+    .pipe gulp.dest('./test')

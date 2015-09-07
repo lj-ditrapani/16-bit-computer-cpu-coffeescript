@@ -1,2 +1,3 @@
 /node_modules
 /cpu.js
+/test/cpu_spec.js

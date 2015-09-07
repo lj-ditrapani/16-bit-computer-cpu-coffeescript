@@ -1,7 +1,7 @@
 ###
 Author:  Lyall Jonathan Di Trapani
 16 bit CPU simulator
----------|---------|---------|---------|---------|---------|---------|--
+---------|---------|---------|---------|---------|---------|---------|---------
 ###
 
 
@@ -206,7 +206,7 @@ export_globals = (exports) ->
     module.exports = exports
   else
     if not ljd?
-      ljd = {}
+      window.ljd = {}
     ljd.cpu16bit = exports
 
 export_globals {
