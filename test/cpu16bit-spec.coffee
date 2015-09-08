@@ -52,12 +52,11 @@ describe 'test helper functions', ->
       [1, 0x17, 0xF, 0x117F, 'HBY']
       [2, 0xFF, 0x5, 0x2FF5, 'LBY']
     ]
-    runTest = (test) ->
+    _.each tests, (test) ->
       [opCode, immediate, register, instruction, name] = test
       it "makes a #{name} instruction", ->
         i = makeImmediate8Instruction(opCode, immediate, register)
         expect(i).to.equal instruction
-    _.each(tests, runTest)
 
   describe 'makeInstruction', ->
     tests = [
