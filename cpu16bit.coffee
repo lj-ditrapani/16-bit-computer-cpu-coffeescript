@@ -96,6 +96,20 @@ class CPU
       @pc = if jump is true then address else @pc + 1
       false
 
+  run: ->
+    end = false
+    while not end
+      end = @step()
+
+  loadProgram: (rom, ram=[]) ->
+    i = 0
+    for value in rom
+      @rom[i] = value
+      i += 1
+    for value in ram
+      @ram[i] = value
+      i += 1
+
   add: (a, b, carry) ->
     sum = a + b + carry
     @carry = Number(sum >= Math.pow(2, 16))
