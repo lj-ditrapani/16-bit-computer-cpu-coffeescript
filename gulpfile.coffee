@@ -3,6 +3,7 @@ coffeelint = require 'gulp-coffeelint'
 mocha = require 'gulp-mocha'
 coffee = require 'gulp-coffee'
 gutil = require 'gulp-util'
+chalk = require 'chalk'
 
 gulp.task 'default', ['lint', 'test']
 
@@ -18,8 +19,8 @@ gulp.task 'test', ->
 logit = ->
   e = arguments[0]
   gutil.log(
-    "<\u001b[0;33m#{e.plugin}\u001b[0m> " +
-    "\u001b[1;31m#{e.name}\u001b[0m"
+    "<#{chalk.yellow(e.plugin)}> " +
+    "#{chalk.bold.red(e.name)}"
   )
   stack = e.stack.split('16-bit-computer-cpu/')[1]
   gutil.log(stack)
