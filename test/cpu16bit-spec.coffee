@@ -52,8 +52,7 @@ describe 'test helper functions', ->
       [1, 0x17, 0xF, 0x117F, 'HBY']
       [2, 0xFF, 0x5, 0x2FF5, 'LBY']
     ]
-    _.each tests, (test) ->
-      [opCode, immediate, register, instruction, name] = test
+    _.each tests, ([opCode, immediate, register, instruction, name]) ->
       it "makes a #{name} instruction", ->
         i = makeImmediate8Instruction(opCode, immediate, register)
         expect(i).to.equal instruction
@@ -66,8 +65,7 @@ describe 'test helper functions', ->
       [6, 0x1, 0x2, 0x3, 0x6123, 'SUB']
       [7, 0x7, 0x1, 0x2, 0x7712, 'ADI']
     ]
-    _.each tests, (test) ->
-      [opCode, a, b, c, instruction, name] = test
+    _.each tests, ([opCode, a, b, c, instruction, name]) ->
       it "makes a #{name} inscruction", ->
         expect(makeInstruction(opCode, a, b, c)).to.equal instruction
 
@@ -83,8 +81,7 @@ describe 'test helper functions', ->
       ["", 0b0000]
       ["-", 0b1000]
     ]
-    _.each tests, (test) ->
-      [str, code] = test
+    _.each tests, ([str, code]) ->
       it "(#{str}) => #{code}", ->
         expect(makeCondCode(str)).to.equal code
 
@@ -104,8 +101,7 @@ describe 'positionOfLastBitShifted', ->
     ['left', 8, 8]
     ['right', 8, 7]
   ]
-  _.each tests, (test) ->
-    [direction, amount, position] = test
+  _.each tests, ([direction, amount, position]) ->
     it "on shift #{direction} by #{amount} = #{position}", ->
       result = positionOfLastBitShifted(direction, amount)
       expect(result).to.equal position
@@ -120,8 +116,7 @@ describe 'oneBitWordMask', ->
     [15, 0x8000]
     [14, 0x4000]
   ]
-  _.each tests, (test) ->
-    [position, mask] = test
+  _.each tests, ([position, mask]) ->
     it "given position #{position} produces mask #{mask}", ->
       expect(oneBitWordMask(position)).to.equal mask
 
@@ -136,8 +131,7 @@ describe 'getShiftCarry', ->
     ['left', 8, 0xFEFF, 0]
     ['right', 8, 0x0080, 1]
   ]
-  _.each tests, (test) ->
-    [direction, amount, value, carry] = test
+  _.each tests, ([direction, amount, value, carry]) ->
     it "(#{value}, #{direction}, #{amount}) => #{carry}", ->
       expect(getShiftCarry(value, direction, amount)).to.equal carry
 
@@ -156,8 +150,7 @@ describe 'matchValue', ->
     [0b110, 0x7FFF, false]
     [0b101, 0x7FFF, true]
   ]
-  _.each tests, (test) ->
-    [cond, value, result] = test
+  _.each tests, ([cond, value, result]) ->
     it "(#{cond}, #{value}) => #{result}", ->
       expect(matchValue(value, cond)).to.equal result
 
@@ -180,8 +173,7 @@ describe 'matchFlags', ->
     [0b01, 1, 0, false]
     [0b01, 1, 1, true]
   ]
-  _.each tests, (test) ->
-    [cond, overflow, carry, result] = test
+  _.each tests, ([cond, overflow, carry, result]) ->
     it "(#{cond}, #{overflow}, #{carry}) => #{result}", ->
       expect(matchFlags(overflow, carry, cond)).to.equal result
 
@@ -195,8 +187,7 @@ describe 'CPU', ->
     cpu.step()
 
   testSetByteOperations = (tests, opCode) ->
-    _.each tests, (test) ->
-      [immediate, register, currentValue, finalValue] = test
+    _.each tests, ([immediate, register, currentValue, finalValue]) ->
       it "sets R#{register} to #{finalValue}", ->
         cpu.registers[register] = currentValue
         i = makeImmediate8Instruction(opCode, immediate, register)
@@ -204,8 +195,7 @@ describe 'CPU', ->
         expect(cpu.registers[register]).to.equal finalValue
 
   testAddSub = (opCode, symbol, tests, immediate = false) ->
-    runTest = (test, binaryPair) ->
-      [a, b, result, finalCarry, finalOverflow] = test
+    runTest = ([a, b, result, finalCarry, finalOverflow], binaryPair) ->
       [initialCarry, initialOverflow] = binaryPair
       cv = "#{initialCarry}#{initialOverflow}"
       it "#{a} #{symbol} #{b} = #{result} (cv #{cv})", ->
@@ -228,8 +218,7 @@ describe 'CPU', ->
         runTest test, binaryPair
 
   testLogicOperation = (opCode, r1, r2, rd, name, tests) ->
-    _.each tests, (test) ->
-      [a, b, result] = test
+    _.each tests, ([a, b, result]) ->
       testName = if name == 'NOT'
         "#{name} #{a} = #{result}"
       else
@@ -303,8 +292,7 @@ describe 'CPU', ->
       [2, 13, 0x0100, 0xFEED]
       [3, 10, 0x1000, 0xFACE]
     ]
-    _.each tests, (test) ->
-      [addressRegister, destRegister, address, value] = test
+    _.each tests, ([addressRegister, destRegister, address, value]) ->
       it "loads RAM[#{address}] into R#{destRegister}", ->
         registers[addressRegister] = address
         ram[address] = value
@@ -318,8 +306,7 @@ describe 'CPU', ->
       [12, 5, 0x1000, 0xFACE]
       [5, 5, 0x1000, 0x1000]
     ]
-    _.each tests, (test) ->
-      [addressRegister, valueRegister, address, value] = test
+    _.each tests, ([addressRegister, valueRegister, address, value]) ->
       it "stores R#{valueRegister} into RAM[#{address}]", ->
         registers[addressRegister] = address
         registers[valueRegister] = value
@@ -428,8 +415,7 @@ describe 'CPU', ->
       [0x450A, 0, 0x8, 0x0A00, 1]
       [0x450A, 1, 0x8, 0x0045, 0]
     ]
-    _.each tests, (test) ->
-      [value, direction, amount, result, carry] = test
+    _.each tests, ([value, direction, amount, result, carry]) ->
       sDirection = if direction then "right" else "left"
       it "SHF #{value} #{sDirection} by #{amount} = #{result}", ->
         [r1, rd] = [14, 7]
@@ -507,8 +493,7 @@ describe 'CPU', ->
       [1, 0x00FF, 0x0101]
       [15, 0x0F00, 0x0F02]
     ]
-    _.each tests, (test) ->
-      [rd, pc, value] = test
+    _.each tests, ([rd, pc, value]) ->
       it "#{rd} #{pc} #{value}", ->
         registers[rd] = 0
         i = makeInstruction(15, 0, 0, rd)
