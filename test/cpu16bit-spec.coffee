@@ -31,18 +31,18 @@ makeInstruction = (opCode, a, b, c) ->
 
 makeCondCode = (strCode) ->
   code = 0
-  if ("V" in strCode) or ("C" in strCode) or ("-" in strCode)
+  if ('V' in strCode) or ('C' in strCode) or ('-' in strCode)
     code += 8
-    if "V" in strCode
+    if 'V' in strCode
       code += 2
-    if "C" in strCode
+    if 'C' in strCode
       code += 1
   else
-    if "N" in strCode
+    if 'N' in strCode
       code += 4
-    if "Z" in strCode
+    if 'Z' in strCode
       code += 2
-    if "P" in strCode
+    if 'P' in strCode
       code += 1
   code
 
@@ -71,15 +71,15 @@ describe 'test helper functions', ->
 
   describe 'makeCondCode', ->
     tests = [
-      ["NZP", 0b0111]
-      ["ZP", 0b0011]
-      ["Z", 0b0010]
-      ["P", 0b0001]
-      ["VC", 0b1011]
-      ["C", 0b1001]
-      ["V", 0b1010]
-      ["", 0b0000]
-      ["-", 0b1000]
+      ['NZP', 0b0111]
+      ['ZP', 0b0011]
+      ['Z', 0b0010]
+      ['P', 0b0001]
+      ['VC', 0b1011]
+      ['C', 0b1001]
+      ['V', 0b1010]
+      ['', 0b0000]
+      ['-', 0b1000]
     ]
     _.each tests, ([str, code]) ->
       it "(#{str}) => #{code}", ->
@@ -219,7 +219,7 @@ describe 'CPU', ->
 
   testLogicOperation = (opCode, r1, r2, rd, name, tests) ->
     _.each tests, ([a, b, result]) ->
-      testName = if name == 'NOT'
+      testName = if name is 'NOT'
         "#{name} #{a} = #{result}"
       else
         "#{a} #{name} #{b} = #{result}"
@@ -231,7 +231,7 @@ describe 'CPU', ->
         expect(registers[rd]).to.equal result
 
   beforeEach ->
-    cpu = new CPU
+    cpu = new CPU()
     ram = cpu.ram
     rom = cpu.rom
     registers = cpu.registers
@@ -416,7 +416,7 @@ describe 'CPU', ->
       [0x450A, 1, 0x8, 0x0045, 0]
     ]
     _.each tests, ([value, direction, amount, result, carry]) ->
-      sDirection = if direction then "right" else "left"
+      sDirection = if direction then 'right' else 'left'
       it "SHF #{value} #{sDirection} by #{amount} = #{result}", ->
         [r1, rd] = [14, 7]
         cpu.carry = 0
@@ -430,14 +430,14 @@ describe 'CPU', ->
   describe 'BRN', ->
     runBranchTest = (mode, r1, r2, tests) ->
       _.each tests, (test) ->
-        messageHead = if mode == 'value'
+        messageHead = if mode is 'value'
           [value, condString, takeJump] = test
           "#{value}"
         else # mode is 'flag'
           [overflow, carry, condString, takeJump] = test
           "#{overflow} #{carry}"
         it messageHead + " #{condString} #{takeJump}", ->
-          if mode == 'value'
+          if mode is 'value'
             registers[r1] = value
           else # mode is 'flag'
             cpu.overflow = overflow
@@ -452,17 +452,17 @@ describe 'CPU', ->
 
     describe 'on value', ->
       tests = [
-        [0xFFFF, "",    false]
-        [0xFFFF, "NZP", true]
-        [0xFFFF, "ZP",  false]
-        [0xFFFF, "N",   true]
-        [0x8000, "N",   true]
-        [0x0000, "NZ",  true]
-        [0x0000, "NP",  false]
-        [0x0000, "Z",   true]
-        [0x7FFF, "P",   true]
-        [0x7FFF, "NZ",  false]
-        [0x7FFF, "NP",  true]
+        [0xFFFF, '',    false]
+        [0xFFFF, 'NZP', true]
+        [0xFFFF, 'ZP',  false]
+        [0xFFFF, 'N',   true]
+        [0x8000, 'N',   true]
+        [0x0000, 'NZ',  true]
+        [0x0000, 'NP',  false]
+        [0x0000, 'Z',   true]
+        [0x7FFF, 'P',   true]
+        [0x7FFF, 'NZ',  false]
+        [0x7FFF, 'NP',  true]
       ]
       runBranchTest('value', 12, 0, tests)
 

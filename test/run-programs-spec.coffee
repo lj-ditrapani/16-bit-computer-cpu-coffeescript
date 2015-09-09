@@ -21,7 +21,7 @@ describe 'Run full programs', ->
   cpu = registers = rom = ram = null
 
   beforeEach ->
-    cpu = new CPU
+    cpu = new CPU()
     ram = cpu.ram
     rom = cpu.rom
     registers = cpu.registers

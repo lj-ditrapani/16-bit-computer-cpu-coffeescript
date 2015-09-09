@@ -17,15 +17,15 @@ getNibbles = (word) ->
 
 
 isPositiveOrZero = (word) ->
-  (word >> 15) == 0
+  (word >> 15) is 0
 
 
 isNegative = (word) ->
-  (word >> 15) == 1
+  (word >> 15) is 1
 
 
 isTruePositive = (word) ->
-  isPositiveOrZero(word) and (word != 0)
+  isPositiveOrZero(word) and (word isnt 0)
 
 
 hasOverflowedOnAdd = (a, b, sum) ->
@@ -34,7 +34,7 @@ hasOverflowedOnAdd = (a, b, sum) ->
 
 
 positionOfLastBitShifted = (direction, amount) ->
-  if direction == 'right'
+  if direction is 'right'
     amount - 1
   else
     16 - amount
@@ -51,11 +51,11 @@ getShiftCarry = (value, direction, amount) ->
 
 
 matchValue = (value, cond) ->
-  if ((cond & 0b100) == 0b100) and isNegative(value)
+  if ((cond & 0b100) is 0b100) and isNegative(value)
     true
-  else if ((cond & 0b010) == 0b010) and (value == 0)
+  else if ((cond & 0b010) is 0b010) and (value is 0)
     true
-  else if ((cond & 0b001) == 0b001) and isTruePositive(value)
+  else if ((cond & 0b001) is 0b001) and isTruePositive(value)
     true
   else
     false
@@ -64,9 +64,9 @@ matchValue = (value, cond) ->
 matchFlags = (overflow, carry, cond) ->
   if (cond >= 2) and overflow
     true
-  else if ((cond & 1) == 1) and carry
+  else if ((cond & 1) is 1) and carry
     true
-  else if (cond == 0) and (not overflow) and (not carry)
+  else if (cond is 0) and (not overflow) and (not carry)
     true
   else
     false
@@ -89,7 +89,7 @@ class CPU
   step: ->
     instruction = @rom[@pc]
     [opCode, a, b, c] = getNibbles instruction
-    if opCode == END
+    if opCode is END
       true
     else
       [jump, address] = this[@opCodes[opCode]](a, b, c)
@@ -101,7 +101,7 @@ class CPU
     while not end
       end = @step()
 
-  loadProgram: (rom, ram=[]) ->
+  loadProgram: (rom, ram = []) ->
     i = 0
     for value in rom
       @rom[i] = value
@@ -179,7 +179,7 @@ class CPU
     amount = (immd & 7) + 1
     value = @registers[r1]
     @carry = getShiftCarry(value, direction, amount)
-    value = if direction == 'right'
+    value = if direction is 'right'
       value >> amount
     else
       (value << amount) & 0xFFFF
