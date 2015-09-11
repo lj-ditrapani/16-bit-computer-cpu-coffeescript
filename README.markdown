@@ -22,25 +22,50 @@ The processor instruction set architecture (ISA) can be found in
 Usage
 -----
 
-    npm install
-    gulp compile
-
-This produces cpu16bit.js which you can use in your projects.
+    npm install ljd-16-bit-cpu
 
 From browser:
 
-    cpu = new ljd.cpu16bit.CPU
+    <script src="node_modules/ljd-16-bit-cpu/cpu16bit.js"></script>
+    <script>
+        cpu = new ljd.cpu16bit.CPU();
+    </script>
 
 From node.js
 
-    cpu16bit = require './cpu16bit.js'
-    cpu = new cpu16bit.CPU
+    cpu16bit = require('ljd-16-bit-cpu');
+    cpu = new cpu16bit.CPU();
 
+Run a program
+
+    // rom is a array of 16-bit integers with length <= 65,536
+    cpu.loadProgram(rom);
+    cpu.run();
+
+Step through a program
+
+    // Optionally, the ram contents may also me provided
+    // ram is a array of 16-bit integers with length <= 65,536
+    cpu.loadProgram(rom, ram);
+    cpu.step();
+    cpu.step();
+    ...
 
 Developing
 ----------
 
+    git clone git@github.com:lj-ditrapani/16-bit-computer-cpu.git
+    cd 16-bit-computer-cpu
     npm install
-    gulp -T
+    gulp compile
+
+This produces cpu16bit.js.
+
+Lint and run tests on node with:
+
+    gulp
+
+Open run-specs.html in a browser to run the tests in a browser environment.
+
 
 Author:  Lyall Jonathan Di Trapani
