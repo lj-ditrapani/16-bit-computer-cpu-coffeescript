@@ -1,5 +1,5 @@
 {
-  "name": "16-bit-computer-cpu",
+  "name": "ljd-16-bit-cpu",
   "version": "0.1.0",
   "description": "LJD 16-bit CPU",
   "main": "cpu16bit.js",
@@ -14,11 +14,12 @@
     "url": "git+https://github.com/lj-ditrapani/16-bit-computer-cpu.git"
   },
   "author": "Lyall Jonathan Di Trapani",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/lj-ditrapani/16-bit-computer-cpu/issues"
   },
   "homepage": "https://github.com/lj-ditrapani/16-bit-computer-cpu#readme",
+  "files": ["cpu16bit.js", "doc/ISA.md"],
   "devDependencies": {
     "chai": "^3.2.0",
     "chalk": "^1.1.1",
