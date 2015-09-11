@@ -16,7 +16,7 @@ Design:
 - 16 instructions (4-bit op-code)
 
 The processor instruction set architecture (ISA) can be found in
-[doc/ISA.markdown](doc/ISA.markdown).
+[doc/ISA.md](doc/ISA.md).
 
 
 Usage
