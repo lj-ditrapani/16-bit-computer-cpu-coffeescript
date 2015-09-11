@@ -1,6 +1,6 @@
 {
   "name": "ljd-16-bit-cpu",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "LJD 16-bit CPU",
   "main": "cpu16bit.js",
   "directories": {
