@@ -28,13 +28,13 @@ From browser:
 
     <script src="node_modules/ljd-16-bit-cpu/cpu16bit.js"></script>
     <script>
-        cpu = new ljd.cpu16bit.CPU();
+        var cpu = new ljd.cpu16bit.CPU();
     </script>
 
 From node.js
 
-    cpu16bit = require('ljd-16-bit-cpu');
-    cpu = new cpu16bit.CPU();
+    var cpu16bit = require('ljd-16-bit-cpu');
+    var cpu = new cpu16bit.CPU();
 
 Run a program
 
