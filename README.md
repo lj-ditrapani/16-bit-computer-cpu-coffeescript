@@ -35,7 +35,7 @@ From browser:
 </script>
 ```
 
-From node.js
+From node.js:
 
 ```javascript
 var cpu16bit = require('ljd-16-bit-cpu');
@@ -45,7 +45,7 @@ var cpu = new cpu16bit.CPU();
 Run a program
 
 ```javascript
-// rom is a array of 16-bit integers with length <= 65,536
+// rom is a array of 16-bit integers and length <= 65,536
 cpu.loadProgram(rom);
 cpu.run();
 ```
@@ -53,8 +53,8 @@ cpu.run();
 Step through a program
 
 ```javascript
-// Optionally, the ram contents may also me provided
-// ram is a array of 16-bit integers with length <= 65,536
+// Optionally, the ram contents may also be provided
+// ram is a array of 16-bit integers and length <= 65,536
 cpu.loadProgram(rom, ram);
 cpu.step();
 cpu.step();
