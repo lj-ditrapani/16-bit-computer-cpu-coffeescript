@@ -6,8 +6,8 @@ gutil = require 'gulp-util'
 chalk = require 'chalk'
 runSequence = require 'run-sequence'
 
-gulp.task 'default', ->
-  runSequence('lint', 'test')
+gulp.task 'default', (cb) ->
+  runSequence('lint', 'test', cb)
 
 gulp.task 'lint', ->
   gulp.src ['*.coffee', 'test/*.coffee']
