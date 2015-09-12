@@ -4,8 +4,10 @@ mocha = require 'gulp-mocha'
 coffee = require 'gulp-coffee'
 gutil = require 'gulp-util'
 chalk = require 'chalk'
+runSequence = require 'run-sequence'
 
-gulp.task 'default', ['lint', 'test']
+gulp.task 'default', ->
+  runSequence('lint', 'test')
 
 gulp.task 'lint', ->
   gulp.src ['*.coffee', 'test/*.coffee']

@@ -1,6 +1,6 @@
 {
   "name": "ljd-16-bit-cpu",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "LJD 16-bit CPU",
   "main": "cpu16bit.js",
   "directories": {
@@ -19,7 +19,10 @@
     "url": "https://github.com/lj-ditrapani/16-bit-computer-cpu/issues"
   },
   "homepage": "https://github.com/lj-ditrapani/16-bit-computer-cpu#readme",
-  "files": ["cpu16bit.js", "doc/ISA.md"],
+  "files": [
+    "cpu16bit.js",
+    "doc/ISA.md"
+  ],
   "devDependencies": {
     "chai": "^3.2.0",
     "chalk": "^1.1.1",
@@ -31,6 +34,7 @@
     "gulp-mocha": "^2.1.3",
     "gulp-util": "^3.0.6",
     "lodash": "^3.10.1",
-    "mocha": "^2.3.0"
+    "mocha": "^2.3.0",
+    "run-sequence": "^1.1.2"
   }
 }
