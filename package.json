@@ -7,7 +7,7 @@
     "doc": "doc"
   },
   "scripts": {
-    "test": "mocha --compilers coffee:coffee-script/register --reporter nyan test/*_spec.coffee"
+    "test": "mocha --compilers coffee:coffee-script/register --reporter nyan test/*-spec.coffee"
   },
   "repository": {
     "type": "git",
