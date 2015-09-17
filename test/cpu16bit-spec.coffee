@@ -252,8 +252,8 @@ describe 'CPU', ->
     it 'has 16 registers', ->
       expect(registers.length).to.equal 16
 
-    it 'has 16 op-codes', ->
-      expect(cpu.opCodes.length).to.equal 16
+    it 'has 15 op-codes', ->
+      expect(cpu.opCodes.length).to.equal 15
 
     it 'has the program counter set to 0', ->
       expect(cpu.pc).to.equal 0
@@ -485,17 +485,3 @@ describe 'CPU', ->
         [1, 1, 'C', true]
       ]
       runBranchTest('flag', 11, 1, tests)
-
-
-  describe 'SPC', ->
-    tests = [
-      [0, 0x0000, 0x0002]
-      [1, 0x00FF, 0x0101]
-      [15, 0x0F00, 0x0F02]
-    ]
-    _.each tests, ([rd, pc, value]) ->
-      it "#{rd} #{pc} #{value}", ->
-        registers[rd] = 0
-        i = makeInstruction(15, 0, 0, rd)
-        runOneInstruction(i, pc)
-        expect(registers[rd]).to.equal value

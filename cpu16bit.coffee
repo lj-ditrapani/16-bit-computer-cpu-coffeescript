@@ -76,7 +76,7 @@ class CPU
   constructor: ->
     @reset()
     @opCodes = ('END HBY LBY LOD STR ADD SUB ADI SBI AND' +
-                 ' ORR XOR NOT SHF BRN SPC').split(' ')
+                 ' ORR XOR NOT SHF BRN').split(' ')
 
   reset: ->
     @pc = 0
@@ -192,9 +192,6 @@ class CPU
     else
       matchValue(value, cond)
     if takeJump then [true, jumpAddr] else [false, 0]
-
-  SPC: (_, __, rd) ->
-    @registers[rd] = @pc + 2
 
 
 export_globals = (exports) ->
