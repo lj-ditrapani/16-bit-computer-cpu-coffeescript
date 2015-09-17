@@ -61,6 +61,31 @@ cpu.step();
 // ...
 ```
 
+Example program in hex
+
+```coffeescript
+// This program adds the values in ram[0] and ram[1]
+// then stores the result in ram[2]
+// 27 + 73 = 100
+
+var rom = [
+  0x100A,       // HBY 0x00 RA
+  0x200A,       // LBY 0x00 RA
+  0x3A01,       // LOD RA R1
+  0x201A,       // LBY 0x01 RA
+  0x3A02,       // LOD RA R2
+  0x5123,       // ADD R1 R2 R3
+  0x202A,       // LBY 0x02 RA
+  0x4A30,       // STR RA R3
+  0x0000        // END
+];
+
+var ram = [27, 73, 0];
+cpu.loadProgram(rom, ram);
+cpu.run();
+cpu.ram[2];     // returns 100
+```
+
 Developing
 ----------
 
