@@ -37,14 +37,14 @@ From browser:
 
 From node.js:
 
-```javascript
+```js
 var cpu16bit = require('ljd-16-bit-cpu');
 var cpu = new cpu16bit.CPU();
 ```
 
 Run a program
 
-```javascript
+```js
 // rom is a array of 16-bit integers and length <= 65,536
 cpu.loadProgram(rom);
 cpu.run();
@@ -52,7 +52,7 @@ cpu.run();
 
 Step through a program
 
-```javascript
+```js
 // Optionally, the ram contents may also be provided
 // ram is a array of 16-bit integers and length <= 65,536
 cpu.loadProgram(rom, ram);
@@ -63,7 +63,7 @@ cpu.step();
 
 Example program in hex
 
-```coffeescript
+```js
 // This program adds the values in ram[0] and ram[1]
 // then stores the result in ram[2]
 // 27 + 73 = 100
