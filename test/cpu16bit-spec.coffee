@@ -436,68 +436,59 @@ describe 'CPU', ->
         expect(cpu.carry).to.equal carry
 
   describe 'BRV', ->
-    runBranchTest = (r1, r2, tests) ->
-      _.each tests, (test) ->
-        [value, condString, takeJump] = test
-        messageHead = "#{value}"
-        it messageHead + " #{condString} #{takeJump}", ->
-          registers[r1] = value
-          jumpAddr = 0x00FF
-          registers[r2] = jumpAddr
-          condCode = makeValueCondCode condString
-          i = makeInstruction(14, r1, r2, condCode)
-          runOneInstruction i
-          finalPC = if takeJump then jumpAddr else 0x0001
-          expect(cpu.pc).to.equal finalPC
-
-    describe 'on value', ->
-      tests = [
-        [0xFFFF, '',    false]
-        [0xFFFF, 'NZP', true]
-        [0xFFFF, 'ZP',  false]
-        [0xFFFF, 'N',   true]
-        [0x8000, 'N',   true]
-        [0x0000, 'NZ',  true]
-        [0x0000, 'NP',  false]
-        [0x0000, 'Z',   true]
-        [0x7FFF, 'P',   true]
-        [0x7FFF, 'NZ',  false]
-        [0x7FFF, 'NP',  true]
-      ]
-      runBranchTest(12, 0, tests)
+    tests = [
+      [0xFFFF, '',    false]
+      [0xFFFF, 'NZP', true]
+      [0xFFFF, 'ZP',  false]
+      [0xFFFF, 'N',   true]
+      [0x8000, 'N',   true]
+      [0x0000, 'NZ',  true]
+      [0x0000, 'NP',  false]
+      [0x0000, 'Z',   true]
+      [0x7FFF, 'P',   true]
+      [0x7FFF, 'NZ',  false]
+      [0x7FFF, 'NP',  true]
+    ]
+    [r1, r2] = [12, 0]
+    _.each tests, ([value, condString, takeJump]) ->
+      it "#{value} #{condString} #{takeJump}", ->
+        registers[r1] = value
+        jumpAddr = 0x00FF
+        registers[r2] = jumpAddr
+        condCode = makeValueCondCode condString
+        i = makeInstruction(14, r1, r2, condCode)
+        runOneInstruction i
+        finalPC = if takeJump then jumpAddr else 0x0001
+        expect(cpu.pc).to.equal finalPC
 
   describe 'BRF', ->
-    runBranchTest = (r1, r2, tests) ->
-      _.each tests, (test) ->
-        [overflow, carry, condString, takeJump] = test
-        messageHead = "#{overflow} #{carry}"
-        it messageHead + " #{condString} #{takeJump}", ->
-          cpu.overflow = overflow
-          cpu.carry = carry
-          jumpAddr = 0x00FF
-          registers[r2] = jumpAddr
-          condCode = makeFlagCondCode condString
-          i = makeInstruction(15, r1, r2, condCode)
-          runOneInstruction i
-          finalPC = if takeJump then jumpAddr else 0x0001
-          expect(cpu.pc).to.equal finalPC
-
-    describe 'on flag', ->
-      tests = [
-        [0, 0, '-', true]
-        [1, 0, '-', false]
-        [0, 1, '-', false]
-        [0, 1, 'VC', true]
-        [1, 0, 'VC', true]
-        [1, 1, 'VC', true]
-        [0, 0, 'VC', false]
-        [0, 0, 'V', false]
-        [0, 1, 'V', false]
-        [1, 0, 'V', true]
-        [1, 1, 'V', true]
-        [0, 0, 'C', false]
-        [0, 1, 'C', true]
-        [1, 0, 'C', false]
-        [1, 1, 'C', true]
-      ]
-      runBranchTest(11, 1, tests)
+    tests = [
+      [0, 0, '-', true]
+      [1, 0, '-', false]
+      [0, 1, '-', false]
+      [1, 1, '-', false]
+      [0, 0, 'VC', false]
+      [0, 1, 'VC', true]
+      [1, 0, 'VC', true]
+      [1, 1, 'VC', true]
+      [0, 0, 'V', false]
+      [0, 1, 'V', false]
+      [1, 0, 'V', true]
+      [1, 1, 'V', true]
+      [0, 0, 'C', false]
+      [0, 1, 'C', true]
+      [1, 0, 'C', false]
+      [1, 1, 'C', true]
+    ]
+    [r1, r2] = [11, 1]
+    _.each tests, ([overflow, carry, condString, takeJump]) ->
+      it "#{overflow} #{carry} #{condString} #{takeJump}", ->
+        cpu.overflow = overflow
+        cpu.carry = carry
+        jumpAddr = 0x00FF
+        registers[r2] = jumpAddr
+        condCode = makeFlagCondCode condString
+        i = makeInstruction(15, r1, r2, condCode)
+        runOneInstruction i
+        finalPC = if takeJump then jumpAddr else 0x0001
+        expect(cpu.pc).to.equal finalPC

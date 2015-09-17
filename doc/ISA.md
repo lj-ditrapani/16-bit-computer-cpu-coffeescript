@@ -19,7 +19,7 @@ Instruction Meaning
     A ORR    Or: logical or two values
     B XOR    exclusive or: exclusive or two values
     C NOT    Not: logical not value
-    D SHF    Shift: shift bits in register in direction and by ammount
+    D SHF    Shift: shift bits in register in direction and by amount
     E BRV    Branch on value (negative, zero, positive)
     F BRF    Branch on flags (carry or overflow)
 
@@ -59,8 +59,7 @@ Instruction operation
 Shift, zero fill
 
     Carry contains bit of last bit shifted out
-    immd4 format
-    DAAA
+    4-bit immd4 format:  DAAA
     D is direction:  0 left, 1 right
     AAA is (amount - 1)
     0-7  ->  1-8
@@ -75,12 +74,15 @@ The 4th nibble in a BRV instruction is the condV (condition) nibble.  The most
 significant bit is unused.  The other 3 bits represent negative, zero, and
 positive respectively.
 
-    0NZP    Check value in RS2 (negative zero positive)
-    0111    unconditional jump (jump if value is Neg, Zero or Positive
-    0100    jump if RS2 is negative
-    0010    jump if RS2 is zero
-    0001    jump if RS2 is positive
-    0011    jump if RS2 is not negative
+    0NZP    Check value in RS1 (negative zero positive)
+    -------------------------------------------------------------------
+    0111    unconditional jump (jump if value is Neg, Zero or Positive)
+    0100    jump if RS1 is negative
+    0010    jump if RS1 is zero
+    0001    jump if RS1 is positive
+    0110    jump if RS1 is not positive
+    0101    jump if RS1 is not zero
+    0011    jump if RS1 is not negative
     0000    never jump (no operation; NOP)
 
 
@@ -91,20 +93,21 @@ most significant bits are unused.  The other 2 bits represent the state of the
 overflow, and carry flags.
 
     00VC    check the overflow (V), and carry (C) flags
-    0000    jump if carry and overflow are *NOT* set (ignore value)
-    0010    jump if overflow set (don't care about carry)
-    0001    jump if carry set (don't care about overflow)
+    0000    jump if carry and overflow are *NOT* set
+    0010    jump if overflow set (regardless of carry)
+    0001    jump if carry set (regardless of overflow)
+    0011    jump if carry or overflow is set
 
-0011 is not used.
 Normally, you want to handle carry or overflow situations differently, hence
 0010 and 0001.
-However, you may also be interested in ensuring NO exceptions (0000).
+If you are interested in ensuring NO exceptions then use 0000.
 
 
 Instruction format
 ------------------
 
             Mm Reg     01  02  03
+    --------------------------------
     0 END    - ----     0   0   0
     1 HBY    - --W-    UC  UC  RD
     2 LBY    - --W-    UC  UC  RD
@@ -123,13 +126,15 @@ Instruction format
     F BRF    - -R-W     0 RS2  condF
 
 
-    Legnd:
-    ---------------------------------------------------------------
+    Legend:
+    ---------------------------------------------------------------------
        Mm   Memory access:    R = read, W = write, - = not accessed
       Reg   Register access:  R = read, W = write, - = not accessed
-      RS1   Source register (2nd nibble)
-      RS2   Source register (3rd nibble)
+            The four register access columns correspond to RS1 RS2 RD PC
+      RS1   Source register 1 (2nd nibble)
+      RS2   Source register 2 (3rd nibble)
        RD   Destination register (4th nibble)
+       PC   Program counter (instruction pointer)
        UC   Unsigned constant (1st or 2nd nibble)
         0   Always zero, unused
        DA   Direction and amount shift bits
