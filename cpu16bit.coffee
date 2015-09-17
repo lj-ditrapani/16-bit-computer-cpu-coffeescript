@@ -100,15 +100,18 @@ class CPU
     end = false
     while not end
       end = @step()
+    return null
 
   loadProgram: (rom, ram = []) ->
     i = 0
     for value in rom
       @rom[i] = value
       i += 1
+    i = 0
     for value in ram
       @ram[i] = value
       i += 1
+    return null
 
   add: (a, b, carry) ->
     sum = a + b + carry

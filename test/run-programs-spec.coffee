@@ -28,26 +28,32 @@ describe 'Run full programs', ->
 
   describe 'loadProgram', ->
     it 'loads program into rom', ->
-      program = [
-        1
-        2
-        3
-        4
-        5
-      ]
+      program = [1, 2, 3, 4, 5]
       cpu.loadProgram program
       expect(rom[0]).to.equal 1
       expect(rom[4]).to.equal 5
+      expect(ram[0]).to.equal 0
+      expect(ram[2]).to.equal 0
+
+    it 'loads program into ram', ->
+      program = [1, 2, 3, 4, 5]
+      data = [6, 7, 8]
+      cpu.loadProgram program, data
+      expect(rom[0]).to.equal 1
+      expect(rom[4]).to.equal 5
+      expect(ram[0]).to.equal 6
+      expect(ram[2]).to.equal 8
+
 
   describe 'adding program', ->
     # RA (register 10) is used for all addresses
-    # A is stored in M[0100]
-    # B is stored in M[0101]
-    # Add A and B and store in M[0102]
+    # A is stored in ram[0100]
+    # B is stored in ram[0101]
+    # Add A and B and store in ram[0102]
     # Put A in R1
     # Put B in R2
     # Add A + B and put in R3
-    # Store R3 into M[0102]
+    # Store R3 into ram[0102]
     program = [
       0x101A    # HBY 0x01 RA
       0x200A    # LBY 0x00 RA
@@ -71,16 +77,16 @@ describe 'Run full programs', ->
     # RA (register 10) is used for all value addresses
     # RB has address of 2nd branch
     # RC has address of final, common, end of program
-    # A is stored in M[0100]
-    # B is stored in M[0101]
-    # If A - B < 3, store 255 in M[0102], else store 1 in M[0102]
+    # A is stored in ram[0100]
+    # B is stored in ram[0101]
+    # If A - B < 3, store 255 in ram[0102], else store 1 in ram[0102]
     # Put A in R1
     # Put B in R2
     # Sub A - B and put in R3
     # Load const 3 into R4
     # Sub R3 - R4 => R5
     # If R5 is negative, 255 => R6, else 1 => R6
-    # Store R6 into M[0102]
+    # Store R6 into ram[0102]
     program = [
       # Load 2nd branch address into RB
       0x100B    # 00 HBY 0x00 RB
@@ -118,7 +124,7 @@ describe 'Run full programs', ->
       0x1006    # 10 HBY 0x00 R6
       0x2016    # 11 LBY 0x01 R6
 
-      # Store final value into M[0102]
+      # Store final value into ram[0102]
       0x202A    # 12 LBY 0x02 RA
       0x4A60    # 13 STR RA R6
       0x0000    # 14 END
