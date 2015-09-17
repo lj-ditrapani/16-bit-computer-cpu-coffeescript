@@ -107,12 +107,12 @@ describe 'Run full programs', ->
       0x6345    # 0B SUB R3 R4 R5
 
       # Branch to ? if A - B >= 3
-      0xE5B3    # 0C BRN R5 RB ZP
+      0xE5B3    # 0C BRV R5 RB ZP
 
       # Load constant 255 into R6
       0x1006    # 0D HBY 0x00 R6
       0x2FF6    # 0E LBY 0xFF R6
-      0xE0C7    # 0F BRN R0 RC NZP (Jump to end)
+      0xE0C7    # 0F BRV R0 RC NZP (Jump to end)
 
       # Load constant 0x01 into R6
       0x1006    # 10 HBY 0x00 R6
@@ -155,12 +155,12 @@ describe 'Run full programs', ->
       0x20D4      # 6 LBY 0x0D R4       addr to end while loop -> R4
 
       # Start of while loop
-      0xE242      # 7 BRN R2 R4 Z       if R2 is zero (0x.... -> PC)
+      0xE242      # 7 BRV R2 R4 Z       if R2 is zero (0x.... -> PC)
       0x7010      # 8 ADI R0 1 R0       increment input address
       0x3006      # 9 LOD R0 R6         Next Input -> R6
       0x5565      # A ADD R5 R6 R5      R5 + R6 (running sum) -> R5
       0x8212      # B SBI R2 1 R2       R2 - 1 -> R2
-      0xE037      # C BRN R0 R3 NZP     0x.... -> PC (unconditional)
+      0xE037      # C BRV R0 R3 NZP     0x.... -> PC (unconditional)
 
       # End of while loop
       0xD506      # D SHF R5 left 1 R6  Double sum

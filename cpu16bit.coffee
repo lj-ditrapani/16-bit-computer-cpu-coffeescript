@@ -76,7 +76,7 @@ class CPU
   constructor: ->
     @reset()
     @opCodes = ('END HBY LBY LOD STR ADD SUB ADI SBI AND' +
-                 ' ORR XOR NOT SHF BRN').split(' ')
+                 ' ORR XOR NOT SHF BRV BRF').split(' ')
 
   reset: ->
     @pc = 0
@@ -185,12 +185,14 @@ class CPU
       (value << amount) & 0xFFFF
     @registers[rd] = value
 
-  BRN: (r1, r2, cond) ->
+  BRV: (r1, r2, cond) ->
     [value, jumpAddr] = [@registers[r1], @registers[r2]]
-    takeJump = if cond >= 8
-      matchFlags(@overflow, @carry, cond - 8)
-    else
-      matchValue(value, cond)
+    takeJump = matchValue(value, cond & 7)
+    if takeJump then [true, jumpAddr] else [false, 0]
+
+  BRF: (r1, r2, cond) ->
+    jumpAddr = @registers[r2]
+    takeJump = matchFlags(@overflow, @carry, cond & 7)
     if takeJump then [true, jumpAddr] else [false, 0]
 
 

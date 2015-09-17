@@ -29,21 +29,22 @@ makeImmediate8Instruction = (opCode, immediate, register) ->
 makeInstruction = (opCode, a, b, c) ->
   (opCode << 12) | (a << 8) | (b << 4) | c
 
-makeCondCode = (strCode) ->
+makeValueCondCode = (strCode) ->
   code = 0
-  if ('V' in strCode) or ('C' in strCode) or ('-' in strCode)
-    code += 8
-    if 'V' in strCode
-      code += 2
-    if 'C' in strCode
-      code += 1
-  else
-    if 'N' in strCode
-      code += 4
-    if 'Z' in strCode
-      code += 2
-    if 'P' in strCode
-      code += 1
+  if 'N' in strCode
+    code += 4
+  if 'Z' in strCode
+    code += 2
+  if 'P' in strCode
+    code += 1
+  code
+
+makeFlagCondCode = (strCode) ->
+  code = 0
+  if 'V' in strCode
+    code += 2
+  if 'C' in strCode
+    code += 1
   code
 
 describe 'test helper functions', ->
@@ -69,21 +70,28 @@ describe 'test helper functions', ->
       it "makes a #{name} inscruction", ->
         expect(makeInstruction(opCode, a, b, c)).to.equal instruction
 
-  describe 'makeCondCode', ->
+  describe 'makeValueCondCode', ->
     tests = [
       ['NZP', 0b0111]
       ['ZP', 0b0011]
       ['Z', 0b0010]
       ['P', 0b0001]
-      ['VC', 0b1011]
-      ['C', 0b1001]
-      ['V', 0b1010]
       ['', 0b0000]
-      ['-', 0b1000]
     ]
     _.each tests, ([str, code]) ->
       it "(#{str}) => #{code}", ->
-        expect(makeCondCode(str)).to.equal code
+        expect(makeValueCondCode(str)).to.equal code
+
+  describe 'makeFlagCondCode', ->
+    tests = [
+      ['VC', 0b0011]
+      ['C', 0b0001]
+      ['V', 0b0010]
+      ['-', 0b0000]
+    ]
+    _.each tests, ([str, code]) ->
+      it "(#{str}) => #{code}", ->
+        expect(makeFlagCondCode(str)).to.equal code
 
 describe 'getNibbles', ->
   it 'splites a word into 4 4-bit nibbles', ->
@@ -252,8 +260,8 @@ describe 'CPU', ->
     it 'has 16 registers', ->
       expect(registers.length).to.equal 16
 
-    it 'has 15 op-codes', ->
-      expect(cpu.opCodes.length).to.equal 15
+    it 'has 16 op-codes', ->
+      expect(cpu.opCodes.length).to.equal 16
 
     it 'has the program counter set to 0', ->
       expect(cpu.pc).to.equal 0
@@ -427,24 +435,16 @@ describe 'CPU', ->
         expect(registers[rd]).to.equal result
         expect(cpu.carry).to.equal carry
 
-  describe 'BRN', ->
-    runBranchTest = (mode, r1, r2, tests) ->
+  describe 'BRV', ->
+    runBranchTest = (r1, r2, tests) ->
       _.each tests, (test) ->
-        messageHead = if mode is 'value'
-          [value, condString, takeJump] = test
-          "#{value}"
-        else # mode is 'flag'
-          [overflow, carry, condString, takeJump] = test
-          "#{overflow} #{carry}"
+        [value, condString, takeJump] = test
+        messageHead = "#{value}"
         it messageHead + " #{condString} #{takeJump}", ->
-          if mode is 'value'
-            registers[r1] = value
-          else # mode is 'flag'
-            cpu.overflow = overflow
-            cpu.carry = carry
+          registers[r1] = value
           jumpAddr = 0x00FF
           registers[r2] = jumpAddr
-          condCode = makeCondCode condString
+          condCode = makeValueCondCode condString
           i = makeInstruction(14, r1, r2, condCode)
           runOneInstruction i
           finalPC = if takeJump then jumpAddr else 0x0001
@@ -464,7 +464,23 @@ describe 'CPU', ->
         [0x7FFF, 'NZ',  false]
         [0x7FFF, 'NP',  true]
       ]
-      runBranchTest('value', 12, 0, tests)
+      runBranchTest(12, 0, tests)
+
+  describe 'BRF', ->
+    runBranchTest = (r1, r2, tests) ->
+      _.each tests, (test) ->
+        [overflow, carry, condString, takeJump] = test
+        messageHead = "#{overflow} #{carry}"
+        it messageHead + " #{condString} #{takeJump}", ->
+          cpu.overflow = overflow
+          cpu.carry = carry
+          jumpAddr = 0x00FF
+          registers[r2] = jumpAddr
+          condCode = makeFlagCondCode condString
+          i = makeInstruction(15, r1, r2, condCode)
+          runOneInstruction i
+          finalPC = if takeJump then jumpAddr else 0x0001
+          expect(cpu.pc).to.equal finalPC
 
     describe 'on flag', ->
       tests = [
@@ -484,4 +500,4 @@ describe 'CPU', ->
         [1, 0, 'C', false]
         [1, 1, 'C', true]
       ]
-      runBranchTest('flag', 11, 1, tests)
+      runBranchTest(11, 1, tests)
