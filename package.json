@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lj-ditrapani/16-bit-computer-cpu.git"
+    "url": "git+https://github.com/lj-ditrapani/16-bit-computer-cpu-coffeescript.git"
   },
   "author": "Lyall Jonathan Di Trapani",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lj-ditrapani/16-bit-computer-cpu/issues"
+    "url": "https://github.com/lj-ditrapani/16-bit-computer-cpu-coffeescript/issues"
   },
-  "homepage": "https://github.com/lj-ditrapani/16-bit-computer-cpu#readme",
+  "homepage": "https://github.com/lj-ditrapani/16-bit-computer-cpu-coffeescript#readme",
   "files": [
     "cpu16bit.js",
     "doc/ISA.md"

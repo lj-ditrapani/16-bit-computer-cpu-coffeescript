@@ -24,7 +24,7 @@ logit = ->
     "<#{chalk.yellow(e.plugin)}> " +
     "#{chalk.bold.red(e.name)}"
   )
-  stack = e.stack.split('16-bit-computer-cpu/')[1]
+  stack = e.stack.split('16-bit-computer-cpu-coffeescript/')[1]
   gutil.log(stack)
 
 gulp.task 'compile', ->

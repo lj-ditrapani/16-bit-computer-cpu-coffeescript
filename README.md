@@ -1,6 +1,8 @@
 LJD 16-bit processor
 ====================
 
+For other implementations, see <https://github.com/lj-ditrapani/16-bit-computer-specification>.
+
 Design:
 -------
 
@@ -90,8 +92,8 @@ Developing
 ----------
 
 ```bash
-git clone git@github.com:lj-ditrapani/16-bit-computer-cpu.git
-cd 16-bit-computer-cpu
+git clone git@github.com:lj-ditrapani/16-bit-computer-cpu-coffeescript.git
+cd 16-bit-computer-cpu-coffeescript
 npm install
 gulp compile
 ```
