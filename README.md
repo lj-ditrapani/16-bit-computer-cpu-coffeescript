@@ -94,8 +94,7 @@ Developing
 ```bash
 git clone git@github.com:lj-ditrapani/16-bit-computer-cpu-coffeescript.git
 cd 16-bit-computer-cpu-coffeescript
-npm install
-gulp compile
+npm run build
 ```
 
 This produces cpu16bit.js.
@@ -103,7 +102,7 @@ This produces cpu16bit.js.
 Lint and run tests on node with:
 
 ```bash
-gulp
+npm run all
 ```
 
 Open run-specs.html in a browser to run the tests in a browser environment.

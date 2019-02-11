@@ -199,6 +199,7 @@ class CPU
     if takeJump then [true, jumpAddr] else [false, 0]
 
 
+
 export_globals = (exports) ->
   if module?.exports?
     module.exports = exports
