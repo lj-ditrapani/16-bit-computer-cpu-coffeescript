@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "mocha --compilers coffee:coffeescript/register --reporter nyan test/*-spec.coffee",
-    "all": "npm test"
+    "lint": "coffeelint cpu16bit.coffee test/cpu16bit-spec.coffee",
+    "build": "coffee -c cpu16bit.coffee",
+    "all": "npm run lint && npm test && npm run build"
   },
   "repository": {
     "type": "git",
